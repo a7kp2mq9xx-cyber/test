@@ -1,3 +1,8 @@
 # test
 
-Repositorio de prueba.
+Repositorio del mod de Sonny 2.
+
+- `estado-mod-sonny.md`: estado del proyecto.
+- `i26/`: rework del lobo (propuesta v4 «Mokoshotar: sangre y escarcha»), con su `LEEME.md` y `fuente/` (código propio del mod: capa `rw_*.as`, `build.py`, pruebas y guiones de Ruffle).
+
+El SWF del juego, las capturas y la descompilación (`DECOMPILACION_PASO5.zip`) no se suben mientras la repo sea pública.
