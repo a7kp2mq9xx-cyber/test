@@ -1,10 +1,11 @@
 # Mod de Sonny 2: estado del proyecto
 
-Última actualización: 25/09/2026 (noche, I26: rework del lobo implementado).
+Última actualización: 26/09/2026 (I27: árbol del lobo con la forma del árbol de clase).
 
 ## Estado actual
 
-- **I26 (vigente):** el rework del lobo (propuesta v4) implementado sobre I25. Se entrega en `SONNY2_I26_parte1.zip` (juego + fuente) y `SONNY2_I26_parte2.zip` (capturas). El usuario todavía no lo probó. Ver la sección I26.
+- **I27 (vigente):** es I26 con el árbol del lobo rehecho con la forma del árbol de clase y las conexiones como requisitos reales. Se entrega en `SONNY2_I27.zip`. Ver la sección I27.
+- **I26:** el rework del lobo (propuesta v4) implementado sobre I25. El usuario lo probó y pidió los cambios de I27.
 - **I19_LOBO:** entregada; el usuario todavía no la probó en el juego.
 - **Pantalla completa 16:9:** la versión vigente es **I22** (`SONNY2_16x9_I22.zip`). Suma a I20 (contraste, World Map y FPS) el HUD de navegación al 62 %, levantado 12 unidades. La prisión 2K de I21 quedó **apagada** hasta nuevo aviso: el usuario pidió volver al fondo original porque no se veía bien.
 - **Maqueta del panel de batalla (25/09):** dos variantes mostradas como capturas, sin tocar el juego. Falta que el usuario elija.
@@ -31,7 +32,8 @@ Base de trabajo: la **versión modificada del SWF** que envió el usuario el 23/
 | SONNY2 I21 (HUD 50 % + prisión IA) | `e4ea9692abc875f254e72629c61ba32a68d47a8253c1044007973256e9b95ff2` |
 | SONNY2 I22 | `88ee7367a3f6138e60c6b3209d738737186125e9a0c1c814cf669590377939af` |
 | SONNY2 I25 | `37a95f7138ee88e509dc5d5c0cdf4cd3b924ee26b0758d557cf804f31eba5469` |
-| **SONNY2 I26 (rework del lobo, vigente)** | `a2d139e7790607d93f4e80276db4df51173772309d203676507cae044d9eea22` |
+| **SONNY2 I27 (árbol estilo clase, vigente)** | `c78db85f44df641777cc4740ad59531f69d7fec6375e15a35dc063d4da416112` |
+| SONNY2 I26 (rework del lobo) | `a2d139e7790607d93f4e80276db4df51173772309d203676507cae044d9eea22` |
 | **Lanzador SONNY.swf 2K nativo** | `8d3fa0e19e670e381316fb5a52130767d0727d1774d7e2020d24a4dea7bfd3b2` |
 | Lanzador modo rendimiento (1080p escalado, 16:9) | `bc8408378ce8c2f4d500944d1ded8ca79b52d8d2aee95f4d3f8766e966000870` |
 | Lanzador original (Sonny Legacy, AS3/AIR) | `24308e9c80ee454f5a7ca41a23dc3672a74403b024d55d5c49373c82fd478a28` |
@@ -142,6 +144,28 @@ Publicada en la misma página (https://claude.ai/artifact/LipbEoaCeY9mk7PqA1C3D4
 - **Definitivas (una por Aspecto, una vez por combate):** Blood Moon Rising (sangre), Endless Winter (hielo), Call of the Ancestors (Ancestros; números por cerrar). Pack Leader aún no tiene.
 - **Aspectos:** a futuro también cambiarán la apariencia del lobo. El usuario responderá otras preguntas después.
 - **Corrección técnica:** la Defensa sí baja el daño cuando supera el Piercing del atacante (el golpe se multiplica por Piercing ÷ Defensa, `executeMove`), además de afectar el crítico.
+
+## I27 (26/09): árbol del lobo con la forma del árbol de clase
+
+Pedido del usuario al ver I26: sin números de rango, sin «Reiniciar lobo», sin «Página 1: Habilidades» y sin el texto «Otro clic en Mokoshotar…»; anillos chicos en las pasivas clave; y la forma del árbol de clase, porque las líneas de I26 no servían (se podía aprender Shatter Guard sin Frost Fang aunque estuvieran conectadas).
+
+- **Árbol de clase, como referencia:**
+  - `talenttreefull` (sprite 3239, fotograma 25) pone los nodos `st0`–`st27` en una grilla con centros en x = 87 + 52·col, y ≈ 124 + 40,3·fila (coordenadas de `_root`), con los nodos al 100 %;
+  - un nodo sin puntos muestra `thing2.bfilter` al 80 %;
+  - entre cada nodo y su `PRESKILL` hay una línea negra de 6 y encima una de 2, `0xFFCC00` si el requisito tiene puntos y `0x2B2B2B` si no;
+  - aprender pide al menos 1 punto en cada `PRESKILL`;
+  - los rangos (`thingoShow`) solo se ven con Espacio apretado.
+- **I27 copia eso:**
+  - `pre` en cada habilidad es el requisito dibujado; `__rwPlace` en `rw_10_data.as` fija columna, fila y requisito;
+  - hay cortes, raíces sueltas y 4 diagonales: Hamstring ↘ Frost Fang, Second Wind ↙ Primal Breath, Deep Wounds ↘ Frozen Blood y Blood Drinker ↙ Shared Hunger;
+  - el cambio de página es un selector «Abilities · Instincts» al pie; el segundo clic en la pestaña sigue funcionando;
+  - los avisos del árbol usan `KrinCombatText`.
+- **Bono de Ancestral Wolf:** el usuario pidió un interruptor y después aclaró que ya existe en la base. Es `_root.__i1AncBonus`: 0,1 en I19 y 0 en la capa night. El rework ahora suma ese valor (`__rwAncBonus`) en lugar de un 0,1 fijo, así que hoy no suma. Los puntos extra siguen atados a Scent of Blood.
+- **Tooltip:**
+  - `KrinToolTipper.inner2` (un ícono dentro del tooltip) tiene el script nativo del ícono y, bajo el mouse, pisaba `tt` y `t` con textos vacíos. `__rwShowTip` le pone `zero` y `__uiTick` repone los textos guardados;
+  - un nodo sin aprender ya no repite la descripción en «Next rank».
+- **Arnés de Ruffle:** la pantalla se estira en horizontal (x ×1,6, y ×1,24; mouse ↔ `_root`). En la app del usuario la escala es pareja, así que los círculos van con el mismo radio en x y en y.
+- **Pruebas:** 280 comprobaciones, todas bien.
 
 ## I26 (25/09, noche): rework del lobo implementado
 
@@ -424,7 +448,8 @@ En `SONNY2_HD_PARTE2.zip` van `NECESITO.md`, las plantillas con guías, los orig
   - que elija la variante A o B del panel de batalla;
   - que responda las 7 preguntas del rework;
   - que pruebe I22 en AIR.
-- **Rework:** implementado en I26. Falta que el usuario lo pruebe. La simulación Heroic con el árbol nuevo queda pendiente: el usuario pidió no correrla por ahora (25/09).
+- **Rework:** implementado en I26; árbol con forma de clase en I27. Falta que el usuario pruebe I27. La simulación Heroic con el árbol nuevo queda pendiente: el usuario pidió no correrla por ahora (25/09).
+- **Menú principal en 2K:** el usuario va a pedirle a ChatGPT el fondo del título en 2560x1440 (con y sin el título «SONNY 2», sin textos ni botones) para integrarlo como los fondos HD.
 - **Repositorio GitHub** `a7kp2mq9xx-cyber/test` (rama `claude/jru-33pp84`, pública): la fuente del rework se puede subir. El juego (SWF) y `DECOMPILACION_PASO5.zip` se suben solo cuando el usuario la haga privada.
 - **2K:** imágenes de pantalla completa para las demás zonas (las da el usuario).
 - **Mod:**
