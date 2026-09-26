@@ -534,6 +534,9 @@ En `SONNY2_HD_PARTE2.zip` van `NECESITO.md`, las plantillas con guías, los orig
   - la simulación Heroic con el árbol nuevo queda pendiente: el usuario pidió no correrla (25/09).
 - **Idioma:** el usuario mencionó cambios «a nivel lenguaje». Hasta ahora pidió solo el formato nativo del tooltip (I28).
 - **Menú de habilidades en 2K (I30):** el panel del menú cubriendo el 16:9, con recuadros más anchos e íconos más grandes. El usuario eligió hacerlo después de I29.
+- **Orden acordado (26/09):**
+  1. el menú de habilidades en 2K;
+  2. revisar las habilidades: el usuario siente que pocas explotan las marcas (Scent, Wounds, Frostbite), salvo unas cuantas. Lo van a conversar antes de tocar nada.
 - **Menú principal en 2K:** el usuario va a pedirle a ChatGPT el fondo del título en 2560x1440 (con y sin el título «SONNY 2», sin textos ni botones) para integrarlo como los fondos HD.
 - **Repositorio GitHub** `a7kp2mq9xx-cyber/test` (rama `claude/jru-33pp84`, pública): la fuente del rework se puede subir. El juego (SWF) y `DECOMPILACION_PASO5.zip` se suben solo cuando el usuario la haga privada.
 - **2K:** imágenes de pantalla completa para las demás zonas (las da el usuario).
