@@ -1,10 +1,11 @@
 # Mod de Sonny 2: estado del proyecto
 
-Última actualización: 26/09/2026 (I28: árbol del lobo ordenado por nivel y menús con aspecto nativo).
+Última actualización: 26/09/2026 (I29: escudo del juego, estados con cantidad y turnos, y cada habilidad por Wounds o por Scent).
 
 ## Estado actual
 
-- **I28 (vigente):** es I27 con el árbol del lobo ordenado por nivel (cada fila es un escalón), el tooltip y los avisos del árbol de clase, el +10 % de Ancestral Wolf restaurado y el panel de Aspectos rehecho con la forma del menú de personaje. Se entrega en `SONNY2_I28.zip`. Ver la sección I28.
+- **I29 (vigente):** es I28 con el selector «Abilities · Instincts» de I27, el escudo del juego (burbuja, `sfx_shield` y «SHIELDED») en los escudos del lobo, los estados que se acumulan con la cantidad en dorado y los turnos en el contador, y la regla del usuario: cada habilidad sube por Wounds o por Scent, no por las dos. Se entrega en `SONNY2_I29.zip`. Ver la sección I29.
+- **I28:** es I27 con el árbol del lobo ordenado por nivel (cada fila es un escalón), el tooltip y los avisos del árbol de clase, el +10 % de Ancestral Wolf restaurado y el panel de Aspectos rehecho con la forma del menú de personaje. El usuario lo probó y pidió los cambios de I29.
 - **I27:** el árbol del lobo con la forma del árbol de clase y las conexiones como requisitos reales. El usuario lo probó y pidió los cambios de I28.
 - **I26:** el rework del lobo (propuesta v4) implementado sobre I25. El usuario lo probó y pidió los cambios de I27.
 - **I19_LOBO:** entregada; el usuario todavía no la probó en el juego.
@@ -33,7 +34,8 @@ Base de trabajo: la **versión modificada del SWF** que envió el usuario el 23/
 | SONNY2 I21 (HUD 50 % + prisión IA) | `e4ea9692abc875f254e72629c61ba32a68d47a8253c1044007973256e9b95ff2` |
 | SONNY2 I22 | `88ee7367a3f6138e60c6b3209d738737186125e9a0c1c814cf669590377939af` |
 | SONNY2 I25 | `37a95f7138ee88e509dc5d5c0cdf4cd3b924ee26b0758d557cf804f31eba5469` |
-| **SONNY2 I28 (árbol por nivel y menús nativos, vigente)** | `58fb99cad99c10cd15e9504fec6ac6e912b6ea827b0f3cd3fa8e5ef36e2df909` |
+| **SONNY2 I29 (escudo del juego y regla Wounds o Scent, vigente)** | `b440bf336021bf4747df5d8647a392a76503e924acd0250c60022d77863cbf21` |
+| SONNY2 I28 (árbol por nivel y menús nativos) | `58fb99cad99c10cd15e9504fec6ac6e912b6ea827b0f3cd3fa8e5ef36e2df909` |
 | SONNY2 I27 (árbol estilo clase) | `c78db85f44df641777cc4740ad59531f69d7fec6375e15a35dc063d4da416112` |
 | SONNY2 I26 (rework del lobo) | `a2d139e7790607d93f4e80276db4df51173772309d203676507cae044d9eea22` |
 | **Lanzador SONNY.swf 2K nativo** | `8d3fa0e19e670e381316fb5a52130767d0727d1774d7e2020d24a4dea7bfd3b2` |
@@ -146,6 +148,35 @@ Publicada en la misma página (https://claude.ai/artifact/LipbEoaCeY9mk7PqA1C3D4
 - **Definitivas (una por Aspecto, una vez por combate):** Blood Moon Rising (sangre), Endless Winter (hielo), Call of the Ancestors (Ancestros; números por cerrar). Pack Leader aún no tiene.
 - **Aspectos:** a futuro también cambiarán la apariencia del lobo. El usuario responderá otras preguntas después.
 - **Corrección técnica:** la Defensa sí baja el daño cuando supera el Piercing del atacante (el golpe se multiplica por Piercing ÷ Defensa, `executeMove`), además de afectar el crítico.
+
+## I29 (26/09): escudo del juego, estados con cantidad y turnos, y regla Wounds o Scent
+
+Pedido del usuario al probar I28 (en su app, nivel 14):
+- volver al selector de páginas de I27;
+- que todo escudo muestre el escudo del juego y diga «Shield» (o lo que use el juego), sin perder en el tooltip cuánto queda;
+- ver en Scent y Frostbite la cantidad y también los turnos;
+- revisar habilidades repetidas.
+
+- **Escudo del juego:**
+  - `__rwShieldFx(u, el)` hace lo mismo que el motor cuando un escudo para un golpe: `BATTLESCREEN["player"+id].shield.play()` (la burbuja), `addSound("Effects", "sfx_shield")` y `KrinNumberShow("shield", …)`, que muestra el cartel «SHIELDED»;
+  - se llama al crear un escudo (`__rwShieldAdd`), al absorber en `__rwPure` y `__rwRawHit`, y cuando el escudo de Guardian's Call absorbe daño del aliado;
+  - Guardian's Call se lanza con `BOOM_SHIELD` y `sfx_shield`.
+- **Íconos de estado:**
+  - el motor pone `buffCounter` = CD (turnos) al crear el ícono (`KrinBuffShower`); el rework ya no lo pisa con la cantidad;
+  - la cantidad va en un campo `__rwStk` dorado con contorno negro, en el borde del dibujo (`buffIcon`), arriba a la derecha.
+- **Repetidas:**
+  - se le ofrecieron 4 cambios y no eligió ninguno;
+  - pidió una regla: una habilidad no debe subir a la vez por la cantidad de Wounds y por la de Scent (Rake y Hamstring ponen los dos juntos);
+  - se aplicó a Canine Instincts, Pack Tactics, Rallying Cry, Relentless Hunt, Winter Heart y Unyielding;
+  - por pedido del usuario no se tocan Cull the Weak, Second Wind, Shared Hunger ni «Frostbite al que golpea»;
+  - los números que quedan no cambiaron.
+- **Textos:** Deep Wounds y Shardfall ya no dicen «Required by…».
+- **Menú de habilidades en 2K:** el usuario preguntó si es factible. Lo es, y queda para I30:
+  - el panel rojo cubre el 16:9 (`__wsL` = −111, `__wsR` = 911);
+  - los recuadros son más anchos y los íconos del árbol más grandes;
+  - hay que cuidar el arrastrar y soltar del Ability Pool.
+- **Arnés:** el servidor HTTP local se cae entre comandos si no se lanza con `setsid`.
+- **Pruebas:** 298 comprobaciones, todas bien.
 
 ## I28 (26/09): árbol ordenado por nivel y menús con aspecto nativo
 
@@ -498,10 +529,11 @@ En `SONNY2_HD_PARTE2.zip` van `NECESITO.md`, las plantillas con guías, los orig
   - que responda las 7 preguntas del rework;
   - que pruebe I22 en AIR.
 - **Rework:**
-  - implementado en I26, árbol con forma de clase en I27 y ordenado por nivel, con menús nativos, en I28;
-  - el usuario probó Endless Winter y el turno extra del aliado (bien); falta que pruebe el resto y que pruebe I28;
+  - implementado en I26, árbol con forma de clase en I27, ordenado por nivel con menús nativos en I28, y escudo del juego y regla Wounds o Scent en I29;
+  - el usuario probó Endless Winter y el turno extra del aliado (bien) e I28 a nivel 14; falta que pruebe I29;
   - la simulación Heroic con el árbol nuevo queda pendiente: el usuario pidió no correrla (25/09).
 - **Idioma:** el usuario mencionó cambios «a nivel lenguaje». Hasta ahora pidió solo el formato nativo del tooltip (I28).
+- **Menú de habilidades en 2K (I30):** el panel del menú cubriendo el 16:9, con recuadros más anchos e íconos más grandes. El usuario eligió hacerlo después de I29.
 - **Menú principal en 2K:** el usuario va a pedirle a ChatGPT el fondo del título en 2560x1440 (con y sin el título «SONNY 2», sin textos ni botones) para integrarlo como los fondos HD.
 - **Repositorio GitHub** `a7kp2mq9xx-cyber/test` (rama `claude/jru-33pp84`, pública): la fuente del rework se puede subir. El juego (SWF) y `DECOMPILACION_PASO5.zip` se suben solo cuando el usuario la haga privada.
 - **2K:** imágenes de pantalla completa para las demás zonas (las da el usuario).
@@ -540,6 +572,8 @@ Están en los fotogramas 1 y 41. Las voces quedan en inglés.
   - no se escriben los requisitos: el árbol los impide con el cartel del juego;
   - cada fila es un escalón de nivel.
 - **Ancestral Wolf:** +10 % de estadísticas fijo con Scent of Blood (el usuario, 26/09).
+- **Wounds o Scent:** una habilidad sube por la cantidad de Wounds o por la de Scent, nunca por las dos (el usuario, 26/09). Frostbite puede ir con cualquiera de las dos.
+- **Escudos:** siempre con el efecto del juego (burbuja, sonido y «SHIELDED»), y el tooltip del estado dice cuánto queda.
 - Duración Krin: «N turnos» = CD − 1.
 - 16:9 sin deformar: se escala por la altura. Lo que se estira son solo los bordes de paneles y los rectángulos lisos; nunca el arte.
 - HUD de navegación: dock al 62 %, abajo al centro y levantado 12 unidades (I22).
