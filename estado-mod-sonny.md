@@ -1,10 +1,11 @@
 # Mod de Sonny 2: estado del proyecto
 
-Última actualización: 26/09/2026 (I29: escudo del juego, estados con cantidad y turnos, y cada habilidad por Wounds o por Scent).
+Última actualización: 26/09/2026 (I30: menú de habilidades en 2K).
 
 ## Estado actual
 
-- **I29 (vigente):** es I28 con el selector «Abilities · Instincts» de I27, el escudo del juego (burbuja, `sfx_shield` y «SHIELDED») en los escudos del lobo, los estados que se acumulan con la cantidad en dorado y los turnos en el contador, y la regla del usuario: cada habilidad sube por Wounds o por Scent, no por las dos. Se entrega en `SONNY2_I29.zip`. Ver la sección I29.
+- **I30 (vigente):** es I29 con el menú de habilidades a lo ancho del 16:9 (sin las bandas borrosas): panel y recuadros más anchos, el árbol de clase y el del lobo en una grilla con los íconos al 140 %, la barra de combate y el Ability Pool más grandes, y el panel de Aspectos con las mismas medidas. Las demás páginas del menú siguen con el de 800. Se entrega en `SONNY2_I30.zip`. Ver la sección I30.
+- **I29:** es I28 con el selector «Abilities · Instincts» de I27, el escudo del juego (burbuja, `sfx_shield` y «SHIELDED») en los escudos del lobo, los estados que se acumulan con la cantidad en dorado y los turnos en el contador, y la regla del usuario: cada habilidad sube por Wounds o por Scent, no por las dos. Se entregó en `SONNY2_I29.zip`. Ver la sección I29.
 - **I28:** es I27 con el árbol del lobo ordenado por nivel (cada fila es un escalón), el tooltip y los avisos del árbol de clase, el +10 % de Ancestral Wolf restaurado y el panel de Aspectos rehecho con la forma del menú de personaje. El usuario lo probó y pidió los cambios de I29.
 - **I27:** el árbol del lobo con la forma del árbol de clase y las conexiones como requisitos reales. El usuario lo probó y pidió los cambios de I28.
 - **I26:** el rework del lobo (propuesta v4) implementado sobre I25. El usuario lo probó y pidió los cambios de I27.
@@ -34,7 +35,8 @@ Base de trabajo: la **versión modificada del SWF** que envió el usuario el 23/
 | SONNY2 I21 (HUD 50 % + prisión IA) | `e4ea9692abc875f254e72629c61ba32a68d47a8253c1044007973256e9b95ff2` |
 | SONNY2 I22 | `88ee7367a3f6138e60c6b3209d738737186125e9a0c1c814cf669590377939af` |
 | SONNY2 I25 | `37a95f7138ee88e509dc5d5c0cdf4cd3b924ee26b0758d557cf804f31eba5469` |
-| **SONNY2 I29 (escudo del juego y regla Wounds o Scent, vigente)** | `b440bf336021bf4747df5d8647a392a76503e924acd0250c60022d77863cbf21` |
+| **SONNY2 I30 (menú de habilidades en 2K, vigente)** | `9a0f17755223035f6dc94763ac80ecfe51b160d1a2a6ad2d7299d348ddeb1444` |
+| SONNY2 I29 (escudo del juego y regla Wounds o Scent) | `b440bf336021bf4747df5d8647a392a76503e924acd0250c60022d77863cbf21` |
 | SONNY2 I28 (árbol por nivel y menús nativos) | `58fb99cad99c10cd15e9504fec6ac6e912b6ea827b0f3cd3fa8e5ef36e2df909` |
 | SONNY2 I27 (árbol estilo clase) | `c78db85f44df641777cc4740ad59531f69d7fec6375e15a35dc063d4da416112` |
 | SONNY2 I26 (rework del lobo) | `a2d139e7790607d93f4e80276db4df51173772309d203676507cae044d9eea22` |
@@ -148,6 +150,51 @@ Publicada en la misma página (https://claude.ai/artifact/LipbEoaCeY9mk7PqA1C3D4
 - **Definitivas (una por Aspecto, una vez por combate):** Blood Moon Rising (sangre), Endless Winter (hielo), Call of the Ancestors (Ancestros; números por cerrar). Pack Leader aún no tiene.
 - **Aspectos:** a futuro también cambiarán la apariencia del lobo. El usuario responderá otras preguntas después.
 - **Corrección técnica:** la Defensa sí baja el daño cuando supera el Piercing del atacante (el golpe se multiplica por Piercing ÷ Defensa, `executeMove`), además de afectar el crítico.
+
+## I30 (26/09): menú de habilidades en 2K
+
+Pedido del usuario: la página de habilidades del menú a lo ancho del 16:9, como la NULL ZONE, sin el recuadro de 800 con las bandas borrosas; íconos más grandes y el menú extendido.
+
+- **Capa `src/rw_80_2k.as`:** trabaja por código sobre las piezas del juego del sprite 3239 (KRINMENU), fotograma 25, sin tocar dibujos.
+
+  | Pieza | Profundidad | Cambio |
+  |---|---|---|
+  | Panel rojo (2951) | 2 | Se estira de −97 a 897 y de 15 a 470 (la barra de navegación empieza en 480) |
+  | Recuadro del árbol (2955) | 7 | −68 a 294 |
+  | Recuadro de la barra de combate (2955) | 5 | 506 a 868 |
+  | Recuadro del centro, arriba (2957) | 23 | Llega hasta 320; el aviso de puntos (3205, profundidad 675) baja 15 |
+  | Recuadro de atributos (2957) | 21 | Baja 30 con su contenido (643–650, 657, 659–668 y 671) |
+  | Barra de combate (`selector`) | 25 | Al 118 % |
+  | Ability Pool (`talentPool`) | 9 | Al 119 % |
+  | Títulos | 672–674 | Centrados en su recuadro |
+  | Cruz | 1431 y 1434 | +114 en x |
+
+  Además:
+  - las pestañas `__v9Tabs` se corren −113;
+  - `__wsFondo.L` y `.R` (los reflejos) se ocultan con el menú o el panel de Aspectos abiertos.
+- **Cuándo se aplica:**
+  - al entrar a la página, por `__v8Sync` (lo llama `KrinCreateAbilityMatrix`);
+  - en cada fotograma, por `__rwTick`;
+  - al entrar a otra página, por `__v92Cleanup`, que llaman todas las páginas del menú. Ahí las piezas compartidas con otras páginas vuelven a su transformación original (profundidades 2, 5, 7, 21, 23, 1431 y 1434).
+
+  Las piezas se buscan por profundidad recorriendo el menú con `for-in`, y los clips también con `getInstanceAtDepth`.
+- **Grilla del árbol:**
+  - `__rwG()` devuelve `__rw2kGrid` en la página de habilidades y `__rwGrid800` fuera de ella;
+  - `__rw2kGrid`: columnas cada 70, centradas en el recuadro (x0 = 7,975), filas cada 45 desde y = 121, nodos al 140 %;
+  - también fija los caños (8 y 3), el anillo (19,6), el emblema (28), los niveles y el selector de página;
+  - el árbol de clase: `talenttreefull` al 140 % en (x0, y0), y sus nodos `st` en (50·col, 32,14·fila). Después se llama a `krinRemakeTree` para que el juego redibuje sus caños.
+- **Panel de Aspectos:** `__rwAspGeo()` usa el panel y los recuadros de `__rw2kL`.
+- **`build.py`:**
+  - la línea del rectángulo de `lineMC` (forma 3145) pasa a ser transparente: coincidía con el borde del recuadro en el menú de 800 y en 2K quedaba suelto;
+  - 119 colocaciones del tutorial del aviso de puntos (sprite 3205, profundidades 5, 7 y 9, fotogramas 12–150) se corren al lugar nuevo. Los números salen de `__rw2kL`.
+- **Interruptor:** `_root.__rw2kEnabled = false` vuelve al menú de 800 de I29.
+- **Arnés 16:9:** `ruffle/page16.html` (`scale: "showAll"`, `forceScale: true`, `letterbox: "off"`) muestra la pantalla como el lanzador 2K, sin estirar.
+  - Coordenadas: pantalla = ((x + 111,11)·720/575, y·720/575) a 1280x720 (`ruffle/gen/mk.py`); a 2560x1440, el doble.
+  - `drive.js` suma `down`/`up` y elige la página con `PAGE=`.
+  - Asignar a la barra es clic en el Ability Pool y después clic en la casilla (no se arrastra).
+  - Para el árbol de clase con datos en la partida rápida: `call _root.loadTalents 0`.
+- **Pruebas:** 312 comprobaciones, todas bien (14 nuevas: `menu_2k`). En Ruffle: árbol, clase, tooltips, barra, tutorial, inventario, NULL ZONE y Aspectos.
+- **Íconos:** los del lobo son de 128 px y se ven a unos 98 px a 2560x1440, así que siguen nítidos.
 
 ## I29 (26/09): escudo del juego, estados con cantidad y turnos, y regla Wounds o Scent
 
@@ -529,13 +576,13 @@ En `SONNY2_HD_PARTE2.zip` van `NECESITO.md`, las plantillas con guías, los orig
   - que responda las 7 preguntas del rework;
   - que pruebe I22 en AIR.
 - **Rework:**
-  - implementado en I26, árbol con forma de clase en I27, ordenado por nivel con menús nativos en I28, y escudo del juego y regla Wounds o Scent en I29;
-  - el usuario probó Endless Winter y el turno extra del aliado (bien) e I28 a nivel 14; falta que pruebe I29;
+  - implementado en I26, árbol con forma de clase en I27, ordenado por nivel con menús nativos en I28, escudo del juego y regla Wounds o Scent en I29, y menú en 2K en I30;
+  - el usuario probó Endless Winter y el turno extra del aliado (bien) e I28 a nivel 14; falta que pruebe I29 e I30;
   - la simulación Heroic con el árbol nuevo queda pendiente: el usuario pidió no correrla (25/09).
 - **Idioma:** el usuario mencionó cambios «a nivel lenguaje». Hasta ahora pidió solo el formato nativo del tooltip (I28).
-- **Menú de habilidades en 2K (I30):** el panel del menú cubriendo el 16:9, con recuadros más anchos e íconos más grandes. El usuario eligió hacerlo después de I29.
+- **Menú de habilidades en 2K:** hecho en I30 (también el panel de Aspectos). Falta que el usuario lo pruebe en su app. Si lo pide, se pueden pasar a 2K las demás páginas del menú (inventario, tienda, datos, opciones y logros).
 - **Orden acordado (26/09):**
-  1. el menú de habilidades en 2K;
+  1. ~~el menú de habilidades en 2K~~ (I30);
   2. revisar las habilidades: el usuario siente que pocas explotan las marcas (Scent, Wounds, Frostbite), salvo unas cuantas. Lo van a conversar antes de tocar nada.
 - **Menú principal en 2K:** el usuario va a pedirle a ChatGPT el fondo del título en 2560x1440 (con y sin el título «SONNY 2», sin textos ni botones) para integrarlo como los fondos HD.
 - **Repositorio GitHub** `a7kp2mq9xx-cyber/test` (rama `claude/jru-33pp84`, pública): la fuente del rework se puede subir. El juego (SWF) y `DECOMPILACION_PASO5.zip` se suben solo cuando el usuario la haga privada.
