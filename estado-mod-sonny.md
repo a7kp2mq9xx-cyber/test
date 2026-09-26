@@ -1,10 +1,11 @@
 # Mod de Sonny 2: estado del proyecto
 
-Última actualización: 26/09/2026 (I27: árbol del lobo con la forma del árbol de clase).
+Última actualización: 26/09/2026 (I28: árbol del lobo ordenado por nivel y menús con aspecto nativo).
 
 ## Estado actual
 
-- **I27 (vigente):** es I26 con el árbol del lobo rehecho con la forma del árbol de clase y las conexiones como requisitos reales. Se entrega en `SONNY2_I27.zip`. Ver la sección I27.
+- **I28 (vigente):** es I27 con el árbol del lobo ordenado por nivel (cada fila es un escalón), el tooltip y los avisos del árbol de clase, el +10 % de Ancestral Wolf restaurado y el panel de Aspectos rehecho con la forma del menú de personaje. Se entrega en `SONNY2_I28.zip`. Ver la sección I28.
+- **I27:** el árbol del lobo con la forma del árbol de clase y las conexiones como requisitos reales. El usuario lo probó y pidió los cambios de I28.
 - **I26:** el rework del lobo (propuesta v4) implementado sobre I25. El usuario lo probó y pidió los cambios de I27.
 - **I19_LOBO:** entregada; el usuario todavía no la probó en el juego.
 - **Pantalla completa 16:9:** la versión vigente es **I22** (`SONNY2_16x9_I22.zip`). Suma a I20 (contraste, World Map y FPS) el HUD de navegación al 62 %, levantado 12 unidades. La prisión 2K de I21 quedó **apagada** hasta nuevo aviso: el usuario pidió volver al fondo original porque no se veía bien.
@@ -32,7 +33,8 @@ Base de trabajo: la **versión modificada del SWF** que envió el usuario el 23/
 | SONNY2 I21 (HUD 50 % + prisión IA) | `e4ea9692abc875f254e72629c61ba32a68d47a8253c1044007973256e9b95ff2` |
 | SONNY2 I22 | `88ee7367a3f6138e60c6b3209d738737186125e9a0c1c814cf669590377939af` |
 | SONNY2 I25 | `37a95f7138ee88e509dc5d5c0cdf4cd3b924ee26b0758d557cf804f31eba5469` |
-| **SONNY2 I27 (árbol estilo clase, vigente)** | `c78db85f44df641777cc4740ad59531f69d7fec6375e15a35dc063d4da416112` |
+| **SONNY2 I28 (árbol por nivel y menús nativos, vigente)** | `58fb99cad99c10cd15e9504fec6ac6e912b6ea827b0f3cd3fa8e5ef36e2df909` |
+| SONNY2 I27 (árbol estilo clase) | `c78db85f44df641777cc4740ad59531f69d7fec6375e15a35dc063d4da416112` |
 | SONNY2 I26 (rework del lobo) | `a2d139e7790607d93f4e80276db4df51173772309d203676507cae044d9eea22` |
 | **Lanzador SONNY.swf 2K nativo** | `8d3fa0e19e670e381316fb5a52130767d0727d1774d7e2020d24a4dea7bfd3b2` |
 | Lanzador modo rendimiento (1080p escalado, 16:9) | `bc8408378ce8c2f4d500944d1ded8ca79b52d8d2aee95f4d3f8766e966000870` |
@@ -144,6 +146,53 @@ Publicada en la misma página (https://claude.ai/artifact/LipbEoaCeY9mk7PqA1C3D4
 - **Definitivas (una por Aspecto, una vez por combate):** Blood Moon Rising (sangre), Endless Winter (hielo), Call of the Ancestors (Ancestros; números por cerrar). Pack Leader aún no tiene.
 - **Aspectos:** a futuro también cambiarán la apariencia del lobo. El usuario responderá otras preguntas después.
 - **Corrección técnica:** la Defensa sí baja el daño cuando supera el Piercing del atacante (el golpe se multiplica por Piercing ÷ Defensa, `executeMove`), además de afectar el crítico.
+
+## I28 (26/09): árbol ordenado por nivel y menús con aspecto nativo
+
+Pedido del usuario al probar I27: una definitiva (Endless Winter) y el turno extra del aliado funcionan bien; los dos menús (árbol y Aspectos) no se veían nativos; al principio se abrían demasiadas habilidades y no quedaba claro qué subir primero. Durante el trabajo pidió además:
+- que el tooltip no diga «Requires…», que use el formato del árbol de clase («You have no points in this ability yet.», «Next Tier (Lvl. X): …») y que el árbol impida aprender con el cartel del juego;
+- restaurar el +10 % de estadísticas de Ancestral Wolf con Scent of Blood, como antes.
+
+- **Orden por nivel:**
+  - `__rwTiers = [1, 2, 3, 5, 6, 8, 10]`: cada fila es un escalón;
+  - `__rwPlace` corre el primer rango al nivel de la fila y conserva la distancia de los rangos siguientes (las gratis no cambian);
+  - las 6 gratis arriba son las únicas raíces de Abilities;
+  - Hamstring (en la columna de Winter) abre Rupture, Frost Fang y Feeding Frenzy;
+  - en Instincts, las pasivas clave van en cadena (Scent → Deep Wounds → Shardfall), y las raíces son Scent, Thick Hide y Pack Tactics (nivel 5);
+  - a nivel 1 solo se abren Scent of Blood y Thick Hide.
+- **Estados del nodo:**
+  - aprendida;
+  - se puede aprender ya: `GlowFilter` verde `0xB4FF45`, el del aviso de puntos del menú;
+  - con requisitos, pero sin puntos: oscura;
+  - bloqueada: alfa 38.
+
+  Los niveles de fila van a la derecha de la grilla («Lvl. N», gris claro si ya se alcanzó).
+- **Avisos del juego:**
+  - `__rwErr(k)` lee `KrinLang[KLangChoosen].TALENTERROR1–4`;
+  - `__rwCanLearn` sigue el orden del botón nativo (botón 3147): primero el requisito, después el nivel y al final los puntos;
+  - los requisitos de la otra página también dan el aviso 4.
+- **Tooltip:**
+  - `SKILLTALENTTIP2`, `SKILLTALENTTIP` + nivel + «): » + rango siguiente y `SKILLTALENTTIP3`;
+  - `SKILLAURA` para las pasivas (con «Key» delante en las clave);
+  - el costo sin la rama.
+- **Pestañas «Abilities» / «Instincts»:** con la forma de las pestañas del menú (`0x404040`, borde oscuro).
+- **Emblema:** la marca `nightAncestralMark` del usuario, de 24 unidades, con brillo azul si está activa y alfa 45 si no.
+- **Bono de Ancestral:**
+  - `__rwAncBonus` devuelve 0,1 fijo (`__rwAncPct`) y se aplica con Scent of Blood;
+  - `__i1AncBonus` queda en 0 por la capa night;
+  - la capa I14 no suma dos veces: pregunta por `__v55Rank(811)`, que el rework deja en 0.
+- **Panel de Aspectos** (`__rwAspectPanel`):
+  - fondo `__nzNativePanel` del tamaño del menú de personaje;
+  - título dorado con contorno, como «Achievements»;
+  - lista de Aspectos en un recuadro `0x373737`, con el elegido en marco verde;
+  - panel central `0x1A1A1A`, con el título en dos líneas, los puntos, el efecto y «Activar»;
+  - a la derecha, la definitiva con ícono, costo, descripción, qué falta y «Aprender»;
+  - `__rwFit` achica la letra si el texto no entra;
+  - «Volver» abre el menú MOKOSHOTAR.
+
+  Íconos de los Aspectos: los dibujos sin tinte de su definitiva (Scent of Blood, Cold Trail, Howl of the Ancestors) y Pack Tactics.
+- **Colores:** muestreados del menú del juego (`__rwUi`).
+- **Pruebas:** 294 comprobaciones, todas bien. Ruffle: árbol a nivel 3 y 12, tooltip, cartel, emblema y panel de Aspectos.
 
 ## I27 (26/09): árbol del lobo con la forma del árbol de clase
 
@@ -448,12 +497,15 @@ En `SONNY2_HD_PARTE2.zip` van `NECESITO.md`, las plantillas con guías, los orig
   - que elija la variante A o B del panel de batalla;
   - que responda las 7 preguntas del rework;
   - que pruebe I22 en AIR.
-- **Rework:** implementado en I26; árbol con forma de clase en I27. Falta que el usuario pruebe I27. La simulación Heroic con el árbol nuevo queda pendiente: el usuario pidió no correrla por ahora (25/09).
+- **Rework:**
+  - implementado en I26, árbol con forma de clase en I27 y ordenado por nivel, con menús nativos, en I28;
+  - el usuario probó Endless Winter y el turno extra del aliado (bien); falta que pruebe el resto y que pruebe I28;
+  - la simulación Heroic con el árbol nuevo queda pendiente: el usuario pidió no correrla (25/09).
+- **Idioma:** el usuario mencionó cambios «a nivel lenguaje». Hasta ahora pidió solo el formato nativo del tooltip (I28).
 - **Menú principal en 2K:** el usuario va a pedirle a ChatGPT el fondo del título en 2560x1440 (con y sin el título «SONNY 2», sin textos ni botones) para integrarlo como los fondos HD.
 - **Repositorio GitHub** `a7kp2mq9xx-cyber/test` (rama `claude/jru-33pp84`, pública): la fuente del rework se puede subir. El juego (SWF) y `DECOMPILACION_PASO5.zip` se suben solo cuando el usuario la haga privada.
 - **2K:** imágenes de pantalla completa para las demás zonas (las da el usuario).
 - **Mod:**
-  - orden lógico del árbol;
   - Frozen Maw;
   - Slot 5;
   - fases v9–v11 (Heroic).
@@ -483,6 +535,11 @@ Están en los fotogramas 1 y 41. Las voces quedan en inglés.
 - Cuando el motor no permite el efecto descrito, se cambia el texto.
 - No hay efectos ocultos.
 - **Textos de combate siempre con números exactos, en lenguaje Krin.**
+- **Árbol del lobo (26/09):**
+  - tooltip con el formato del árbol de clase;
+  - no se escriben los requisitos: el árbol los impide con el cartel del juego;
+  - cada fila es un escalón de nivel.
+- **Ancestral Wolf:** +10 % de estadísticas fijo con Scent of Blood (el usuario, 26/09).
 - Duración Krin: «N turnos» = CD − 1.
 - 16:9 sin deformar: se escala por la altura. Lo que se estira son solo los bordes de paneles y los rectángulos lisos; nunca el arte.
 - HUD de navegación: dock al 62 %, abajo al centro y levantado 12 unidades (I22).
